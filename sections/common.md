@@ -1,12 +1,12 @@
 # 基础问题
-* [`[Basic]` 变量类型](/sections/common.md#变量类型)
-* [`[Basic]` 类型判断](/sections/common.md#类型判断)
-* [`[Basic]` 作用域](/sections/common.md#作用域)
-* [`[Basic]` 引用传递与值传递与指针](/sections/common.md#引用传递与值传递与指针)
-* [`[Basic]` 内存释放](/sections/common.md#内存释放)
-* [`[Basic]` ES6新特性](/sections/common.md#ES6新特性)
+* [`[Basic]` 1.变量类型](/sections/common.md#1.变量类型)
+* [`[Basic]` 2.引用传递与值传递与指针](/sections/common.md#2.引用传递与值传递与指针)
+* [`[Basic]` 3.作用域](/sections/common.md#3.作用域)
+* [`[Basic]` 4.类型判断](/sections/common.md#4.类型判断)
+* [`[Basic]` 5.内存释放](/sections/common.md#5.内存释放)
+* [`[Basic]` 6.ES6新特性](/sections/common.md#6.ES6新特性)
 
-## 变量类型
+## 1.变量类型
 JavaScript中的变量有5个基本数据类型（Undefined, Null, Boolean, Number, String）和引用数据类型（Object，Function，Array等）。
 ```
 类型        可能的值
@@ -16,8 +16,8 @@ Boolean     true 和 false
 Number      整数和浮点数，例如：1和3.14e10
 String      任何字符串，例如： var a = 'string';
 ```
-### 基本类型和引用类型的区别
-1.基本类型和引用类型的声明方式是一样的：
+### 1.1基本类型和引用类型的区别
+a.基本类型和引用类型的声明方式是一样的：
 ```
 // 声明一个String类型的变量
 var str = "string";
@@ -26,7 +26,7 @@ var str = "string";
 var person = new Object();
 person.name = "Jeremy";
 ```
-2.二者的主要区别在于对变量内容保存的方式，基本类型的变量中存储的就是简单的数据段，而引用类型变量存储的是指向对象的引用，比如：
+b.二者的主要区别在于对变量内容保存的方式，基本类型的变量中存储的就是简单的数据段，而引用类型变量存储的是指向对象的引用，比如：
 ```
 // 基本类型的变量复制，可以看出基本类型变量存储的就是变量的值
 var num1 = 1;
@@ -41,9 +41,9 @@ var obj2 = obj1;
 obj2.name = "James";
 console.log(obj1.name); //James
 ```
-## 类型判断
+## 2.引用传递与值传递与指针
 “简单点说, 对象是引用传递, 基础类型是值传递, 通过将基础类型包装 (boxing) 可以以引用的方式传递”这是大部分人这样认为的，但我更赞同下面这种解释
-### 传值还是传引用
+### 2.1传值还是传引用
 ```
 function changeStuff(num, obj1, obj2)
 {
@@ -61,17 +61,17 @@ console.log(obj1.item);    // changed
 console.log(obj2.item);    // unchanged
 ```
 以上面的`changeStuff(num, obj1, obj2)`为例，解释传值还是传引用
-#### 传值
+### 2.2传值
 函数内的num, obj1, obj2都将是一份新的内存，与调用函数之前定义的三个变量毫无关系。函数内无论怎么修改这三个参数，外部定义的三个变量的值始终不变
 传值的意思就是：传内存拷贝。
 
-### 传引用
+### 2.3传引用
 函数内的num, obj1, obj2都分别指向一块内存，该内存就是调用函数之前定义的三个变量时创建的内存。函数内对这三个参数所做的任何改动，都将反映到外部定义的三个变量上。传引用的意思就是：传对地址的引用，传地址指向。
 
 从上面的代码可以看出，JavaScript中函数参数的传递方式既不是传值，也不是传引用，而是叫[call-by-sharing](http://en.wikipedia.org/wiki/Evaluation_strategy#Call_by_sharing)。
 
 
-### Call-by-sharing
+### 2.4Call-by-sharing
 它的意思是：传引用的拷贝。
 * `changeStuff()`中的num, obj1, obj2都是一个引用
 * 他们的内容是某块内存的地址
@@ -110,17 +110,17 @@ console.log(person.name);//James
 
 除了JavaScript之外，Python, Java, Ruby, Scheme等语言也是采用call-by-sharing的求值策略。
 
-### 参考链接
+### 2.5参考链接
 * [JavaScript中的参数传递](http://weizhifeng.net/arguments-of-function-in-JavaScript.html)
 * [JS 中没有按地址（引用）传递，只有按值传递](http://www.cnblogs.com/youxin/p/3354903.html)
 * [Call_by_sharing](https://en.wikipedia.org/wiki/Evaluation_strategy#Call_by_sharing)
 * [js-stackoverflow-highest-votes](https://github.com/simongong/js-stackoverflow-highest-votes/edit/master/questions21-30/parameter-passed-by-value-or-reference.md)
 
 
-## 作用域
+## 3.作用域
 
-## 引用传递与值传递与指针
+## 4.类型判断
 
-## 内存释放
+## 5.内存释放
 
-## ES6新特性
+## 6.ES6新特性
