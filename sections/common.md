@@ -124,3 +124,11 @@ console.log(person.name);//James
 ## 5.内存释放
 
 ## 6.ES6新特性
+
+### ES6声明变量的六种方法
+* var (es5也有)
+* function (es5也有)
+* let (es6新特性)
+* const (es6新特性)
+* import (es6新特性)
+* class (es6新特性)
