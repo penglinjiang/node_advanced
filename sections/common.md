@@ -178,6 +178,7 @@ function require(/* ... */) {
 * [JS 中没有按地址（引用）传递，只有按值传递](http://www.cnblogs.com/youxin/p/3354903.html)
 * [Call_by_sharing](https://en.wikipedia.org/wiki/Evaluation_strategy#Call_by_sharing)
 * [js-stackoverflow-highest-votes](https://github.com/simongong/js-stackoverflow-highest-votes/edit/master/questions21-30/parameter-passed-by-value-or-reference.md)
+* [exports 和 module.exports 的区别](https://cnodejs.org/topic/5231a630101e574521e45ef8)
 
 
 ## 3.作用域
