@@ -183,6 +183,53 @@ function require(/* ... */) {
 
 ## 3.作用域
 
+### 3.1函数作用域
+1.在es5中声明变量的方式只有var或不使用关键字var。其中使用var关键字声明的变量都是函数作用域。如下：
+```
+    function rainman(){
+        // rainman函数体内存在三个局部变量 i j k
+        var i = 0;
+        if ( 1 ) {
+            var j = 0;
+            for(var k = 0; k < 3; k++) {
+                console.log( k );  //分别输出 0 1 2
+            }
+            console.log( k );        //输出3
+        }
+        console.log( j );            //输出0
+    }
+```
+上面的例子中，说明i、j、k的作用域都是在函数rainman。var定义的不存在块级作用域，但却存在变量提升。如下：
+```
+     function test() {
+       console.log(a); // 输出undefined
+       var a = 1;
+     }
+```
+尽管a的声明语句 ``` var a = 1```在a被使用之后才声明，但对于js来说却不会报错，就是存在变量提升的缘故。上面的代码等价于：
+```
+     function test() {
+       var a;
+       console.log(a); // 输出undefined
+       a = 1;
+     }
+```
+这即js所谓的变量提升。
+2.变量查找规则。js在使用变量时，会从最里层的函数作用域开始往外找。找到同名的变量则会立马返回，而不会继续往外层找。如果没找到同名变量，则会继续往外层函数继续查找，如果都找不到，再到全局变量里面找，直到找到。找不到则报错“ReferenceError： XXX is not defined”。
+```
+     function outTest() {
+       console.log(a); // 输出undefined
+       var a = 1;
+       function innerTest() {
+          console.log(a);//同样输出undefined，下面那行代码会出现变量提升，导致查找a变量时，在innerTest就找到了，所以直接返回，而不会打印1
+	  var a = "a is not been defined here but been assigned here"
+       }
+     }
+```
+  上面的例子也说明内嵌函数可以使用外层函数的变量，但外层函数却不能直接使用内嵌函数的变量。
+  
+### 3.2块级作用域
+从es6开始，js就已经开始支持块级作用域。阮一峰大神的[es6教程](http://es6.ruanyifeng.com/#docs/let)已经说得很清楚了,这里就不赘述了。
 ## 4.类型判断
 
 ## 5.内存释放
