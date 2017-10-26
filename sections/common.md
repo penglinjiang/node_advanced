@@ -1,12 +1,12 @@
 # 基础问题
-* [`[Basic]` 1.变量类型](/sections/common.md#1变量类型)
-* [`[Basic]` 2.引用传递与值传递与指针](/sections/common.md#2.引用传递与值传递与指针)
-* [`[Basic]` 3.作用域](/sections/common.md#3.作用域)
-* [`[Basic]` 4.类型判断](/sections/common.md#4.类型判断)
-* [`[Basic]` 5.内存释放](/sections/common.md#5.内存释放)
-* [`[Basic]` 6.ES6新特性](/sections/common.md#6.ES6新特性)
+* [`[Basic]` 1.变量类型](/sections/common.md#变量类型)
+* [`[Basic]` 2.引用传递与值传递与指针](/sections/common.md#引用传递与值传递与指针)
+* [`[Basic]` 3.作用域](/sections/common.md#作用域)
+* [`[Basic]` 4.类型判断](/sections/common.md#类型判断)
+* [`[Basic]` 5.内存释放](/sections/common.md#内存释放)
+* [`[Basic]` 6.ES6新特性](/sections/common.md#ES6新特性)
 
-## 1变量类型
+## 变量类型
 JavaScript中的变量有5个基本数据类型（Undefined, Null, Boolean, Number, String）和引用数据类型（Object，Function，Array等）。
 ```
 类型        可能的值
@@ -41,7 +41,7 @@ var obj2 = obj1;
 obj2.name = "James";
 console.log(obj1.name); //James
 ```
-## 2.引用传递与值传递与指针
+## 引用传递与值传递与指针
 “简单点说, 对象是引用传递, 基础类型是值传递, 通过将基础类型包装 (boxing) 可以以引用的方式传递”这是大部分人这样认为的，但我更赞同下面这种解释
 ### 2.1传值还是传引用
 ```
@@ -181,7 +181,7 @@ function require(/* ... */) {
 * [exports 和 module.exports 的区别](https://cnodejs.org/topic/5231a630101e574521e45ef8)
 
 
-## 3.作用域
+## 作用域
 
 ### 3.1函数作用域
 1.在es5中声明变量的方式只有var或不使用关键字var。其中使用var关键字声明的变量都是函数作用域。如下：
@@ -230,11 +230,11 @@ function require(/* ... */) {
   
 ### 3.2块级作用域
 从es6开始，js就已经开始支持块级作用域。阮一峰大神的[ECMAScript 6 入门](http://es6.ruanyifeng.com/#docs/let)已经说得很清楚了,这里就不赘述了。
-## 4.类型判断
+## 类型判断
 
-## 5.内存释放
+## 内存释放
 
-## 6.ES6新特性
+## ES6新特性
 
 ### ES6声明变量的六种方法
 * var (es5也有)
