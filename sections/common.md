@@ -110,7 +110,70 @@ console.log(person.name);//James
 
 除了JavaScript之外，Python, Java, Ruby, Scheme等语言也是采用call-by-sharing的求值策略。
 
-### 2.5参考链接
+### 2.5 module.exports和exports
+明白了值传递和引用传递，这里插个小曲说明一下模块加载的问题。也是常问的问题，答案随便也能搜到，这里只是引用一段我认为解释得很到位的一段解释：
+```
+require 用来加载代码，而 exports 和 module.exports 则用来导出代码。但很多新手可能会迷惑于 exports 和 module.exports 的区别，为了更好的理解 exports 和 module.exports 的关系，我们先来巩固下 js 的基础。示例：
+
+test.js
+
+var a = {name: 1};
+var b = a;
+
+console.log(a);
+console.log(b);
+
+b.name = 2;
+console.log(a);
+console.log(b);
+
+var b = {name: 3};
+console.log(a);
+console.log(b);
+
+运行 test.js 结果为：
+
+{ name: 1 }
+{ name: 1 }
+{ name: 2 }
+{ name: 2 }
+{ name: 2 }
+{ name: 3 }
+
+解释：a 是一个对象，b 是对 a 的引用，即 a 和 b 指向同一块内存，所以前两个输出一样。当对 b 作修改时，即 a 和 b 指向同一块内存地址的内容发生了改变，所以 a 也会体现出来，所以第三四个输出一样。当 b 被覆盖时，b 指向了一块新的内存，a 还是指向原来的内存，所以最后两个输出不一样。
+
+明白了上述例子后，我们只需知道三点就知道 exports 和 module.exports 的区别了：
+1.module.exports 初始值为一个空对象 {}
+2.exports 是指向的 module.exports 的引用
+3.require() 返回的是 module.exports 而不是 exports
+
+我们经常看到这样的写法：
+
+exports = module.exports = somethings
+上面的代码等价于:
+
+module.exports = somethings
+exports = module.exports
+原理很简单，即 module.exports 指向新的对象时，exports 断开了与 module.exports 的引用，那么通过 exports = module.exports 让 exports 重新指向 module.exports 即可。
+```
+官方的中文文档也解释得很明确：
+```
+function require(/* ... */) {
+  const module = { exports: {} };
+  ((module, exports) => {
+    // 模块代码在这。在这个例子中，定义了一个函数。
+    function someFunc() {}
+    exports = someFunc;
+    // 此时，exports 不再是一个 module.exports 的快捷方式，
+    // 且这个模块依然导出一个空的默认对象。
+    module.exports = someFunc;
+    // 此时，该模块导出 someFunc，而不是默认对象。
+  })(module, module.exports);
+  return module.exports;
+}
+```
+
+### 2.6参考链接
 * [JavaScript中的参数传递](http://weizhifeng.net/arguments-of-function-in-JavaScript.html)
 * [JS 中没有按地址（引用）传递，只有按值传递](http://www.cnblogs.com/youxin/p/3354903.html)
 * [Call_by_sharing](https://en.wikipedia.org/wiki/Evaluation_strategy#Call_by_sharing)
