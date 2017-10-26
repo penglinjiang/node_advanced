@@ -1,12 +1,12 @@
 # 基础问题
-* [`[Basic]` 1.变量类型](/sections/common.md#变量类型)
+* [`[Basic]` 1.变量类型](/sections/common.md#1变量类型)
 * [`[Basic]` 2.引用传递与值传递与指针](/sections/common.md#2.引用传递与值传递与指针)
 * [`[Basic]` 3.作用域](/sections/common.md#3.作用域)
 * [`[Basic]` 4.类型判断](/sections/common.md#4.类型判断)
 * [`[Basic]` 5.内存释放](/sections/common.md#5.内存释放)
 * [`[Basic]` 6.ES6新特性](/sections/common.md#6.ES6新特性)
 
-## 变量类型
+## 1变量类型
 JavaScript中的变量有5个基本数据类型（Undefined, Null, Boolean, Number, String）和引用数据类型（Object，Function，Array等）。
 ```
 类型        可能的值
