@@ -277,6 +277,7 @@ function require(/* ... */) {
 ### 3.2块级作用域
 从es6开始，js就已经开始支持块级作用域。阮一峰大神的[ECMAScript 6 入门](http://es6.ruanyifeng.com/#docs/let)已经说得很清楚了,这里就不赘述了。
 ## 类型判断
+  关于类型判断，方法不一，这里不详述，可参考[判断 JavaScript 数据类型的4种方法](http://www.cnblogs.com/onepixel/p/5126046.html), [Javascript 基础问题—类型判断](http://www.itdadao.com/articles/c15a1337958p0.html)
 
 ## 内存释放
 
