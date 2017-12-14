@@ -1,7 +1,7 @@
 # redis安装及相关配置参考文档
-* [`[Basic]`redis安装](/redis.md#redis安装)
-* [`[Basic]`redis基础配置](/redis.md#基础配置)
-* [`[Basic]`redis主从哨兵配置](/redis.ms#主从哨兵配置)
+* [`[Basic]`redis安装](/sections/redis.md#redis安装)
+* [`[Basic]`redis基础配置](/sections/redis.md#基础配置)
+* [`[Basic]`redis主从哨兵配置](/sections/redis.ms#主从哨兵配置)
 
 ## redis安装
 &emsp;1.下载安装包   
