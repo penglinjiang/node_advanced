@@ -101,6 +101,63 @@ always-show-logo yes
 databases 16
 //设置数据库个数。默认数据库是 DB 0.可以通过SELECT where dbid is a number between 0 and 'databases'-1为每个连接使用不同的数据库。
 
+########################################################## 备份  ###########################################################
+//下面的例子将会进行把数据写入磁盘的操作:配置redis在何时生成快照，sava有两个参数  1. 第一个参数为时间，单位为秒。 2. 第二个参数为keys的变更数，单位为个，例如：save 300 20，如果300秒有20个key发生了变更则生成快照. 禁用自动生成快照，只要注释调所有的save就行了，或者把save设置为`""`同样能达到禁止生成快照的效果
+save 900 1  //900秒（15分钟）之后，且至少1次变更
+save 300 10  //300秒（5分钟）之后，且至少10次变更
+save 60 10000  //60秒之后，且至少10000次变更
+
+stop-writes-on-bgsave-error yes
+//生成快照失败是否停止写. 默认情下如果在启用了save且生成快照时发生错误，redis将停止写操作.如果后台保存进程重新启动工作了，redis 也将自动的允许写操作。如果有其它监控方式也可关闭。
+
+rdbcompression yes
+//  是否启用压缩数据库来节省空间. 是否在备份.rdb文件时是否用LZF压缩字符串，默认设置为yes。如果想节约cpu资源可以把它设置为no。
+
+rdbchecksum yes
+// 是否对数据进行完整性校验。
+
+dbfilename dump.rdb
+//数据库文件名
+
+dir ./
+//备份文件目录，文件名就是上面的 "dbfilename" 的值。累加文件也放这里。注意你这里指定的必须是目录，不是文件名。
+
+
+########################################################## 主从同步 #######################################################
+// 1) redis主从同步是异步的，但是可以配置在没有指定slave连接的情况下使master停止写入数据。
+// 2) 连接中断一定时间内，slave可以执行部分数据重新同步。
+// 3) 同步是自动的，slave可以自动重连且同步数据。
+# slaveof <masterip> <masterport> //设置当前配置为masterip masterport的从库，例如slaveof 192.168.5.2 6379
+
+# masterauth <master-password>
+//master连接密码,主从自动切换的须后需要保持主库配置文件和从库配置文件的master-password一致。 距离： masterauth "123456789"
+
+slave-serve-stale-data yes
+//1) 如果 slave-serve-stale-data 设置为 "yes" (默认值)，slave会继续响应客户端请求，可能是正常数据，也可能是还没获得值的空数据。
+//2) 如果 slave-serve-stale-data 设置为 "no"，slave会回复"正在从master同步（SYNC with master in progress）"来处理各种请求，除了 INFO 和 SLAVEOF 命令。
+
+slave-read-only yes
+//你可以配置salve实例是否接受写操作。可写的slave实例可能对存储临时数据比较有用(因为写入salve# 的数据在同master同步之后将很容被删除)，但是如果客户端由于配置错误在写入时也可能产生一些问题。
+//从Redis2.6默认所有的slave为只读
+//注意:只读的slave不是为了暴露给互联网上不可信的客户端而设计的。它只是一个防止实例误用的保护层。
+
+repl-diskless-sync no  //默认无盘同步
+//redis有盘同步： redis同步时通常先将同步的数据生成到物理磁盘上的rdb文件中，然后在读取rdb文件发送到其它同步机。
+//redis无盘同步： 省略向磁盘生成rdb的过程
+
+repl-diskless-sync-delay 5
+//如果非磁盘同步方式开启，可以配置同步延迟时间，以等待master产生子进程通过socket传输RDB数据给slave。默认值为5秒，设置为0秒则每次传输无延迟。
+
+# repl-ping-slave-period 10
+//slave根据指定的时间间隔向master发送ping请求。默认10秒。
+
+# repl-timeout 60
+//同步的超时时间
+//1）slave在与master SYNC期间有大量数据传输，造成超时
+//2）在slave角度，master超时，包括数据、ping等
+//在master角度，slave超时，当master发送REPLCONF ACK pings 确保这个值大于指定的repl-ping-slave-period，否则在主从间流量不高时每次都会检测到超时
+
 http://www.cnblogs.com/guodf/p/6585657.html
+http://www.jianshu.com/p/41f393f594e8
 ```
 ## redis主从哨兵配置
