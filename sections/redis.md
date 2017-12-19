@@ -157,7 +157,83 @@ repl-diskless-sync-delay 5
 //2）在slave角度，master超时，包括数据、ping等
 //在master角度，slave超时，当master发送REPLCONF ACK pings 确保这个值大于指定的repl-ping-slave-period，否则在主从间流量不高时每次都会检测到超时
 
-http://www.cnblogs.com/guodf/p/6585657.html
+repl-disable-tcp-nodelay no
+//是否在slave套接字发送SYNC之后禁用 TCP_NODELAY,启用后，redis将在指定时间内合并小的tcp包来减少请求次数从而减少带宽，同样，这也造成此段时间内主从数据的不一致。
+
+# repl-backlog-size 1mb
+//主从失去连接时，此缓冲区越大，失去连接的时间就可以越长。
+
+# repl-backlog-ttl 3600
+//当master在一段时间内不再与任何slave连接，backlog将会释放。以下选项配置了从最后一个slave断开开始计时多少秒后，backlog缓冲将会释放。0表示永不释放backlog
+
+slave-priority 100
+//slave的优先级是一个整数展示在Redis的Info输出中。如果master不再正常工作了，sentinel将用它来选择一个slave提升为master。优先级数字小的salve会优先考虑提升为master，所以例如有三个slave优先级分别为10，100，25，sentinel将挑选优先级最小数字为10的slave。0作为一个特殊的优先级，标识这个slave不能作为master，所以一个优先级为0的slave永远不会被sentinel挑选提升为master。默认优先级为100
+
+# min-slaves-to-write 3
+# min-slaves-max-lag 10
+//设置当一个master端的可用slave少于N个，延迟时间大于M秒时，不接收写操作,如上 slave少于3个且延迟时间大于10秒时，不接受写操作。两者之一设置为0将禁用这个功能。默认 min-slaves-to-write 值是0（该功能禁用）并且 min-slaves-max-lag 值是10。
+
+# slave-announce-ip 5.5.5.5
+# slave-announce-port 1234
+//slave可选配置，此配置的目的在于向master申明自己的ip和端口
+
+########################################################## 安全 ############################################################
+
+# requirepass foobared
+//要求客户端在处理任何命令时都要验证身份和密码，默认没有密码。由于redis太快，外部用户每秒可以尝试150K次密码，因此你需要一个很难破解的密码
+
+# rename-command CONFIG "" //禁用CONFIG这个命令
+# rename-command CONFIG b840fc02d524045429941cc15f59e41cb7be6c52
+//它用来改变共享环境中危险命令的名字，在这个例子中 CONFIG 命令被重命名为一个难以猜解的名字。这会对内部用户的工具有效，但是对一般的客户端无效。请注意：改变命令名字被记录到AOF文件或被传送到从服务器可能产生问题。
+
+######################################################### 限制 ###########################################################
+
+# maxclients 10000
+//设置最多同时连接的客户端数量。默认这个限制是10000个客户端，然而如果Redis服务器不能配置处理文件的限制数来满足指定的值，那么最大的客户端连接数就被设置成当前文件限制数减32（因为Redis服务器保留了一些文件描述符作为内部使用）。一旦达到这个限制，Redis会关闭所有新连接并发送错误'max number of clients reached'
+
+# maxmemory <bytes>
+//不要使用比设置的上限更多的内存。一旦内存使用达到上限，Redis会根据选定的回收策略（参见：maxmemmory-policy）删除key。如果因为删除策略Redis无法删除key，或者策略设置为 "noeviction"，Redis会回复需要更多内存的错误信息给命令。例如，SET,LPUSH等等，但是会继续响应像Get这样的只读命令。在使用Redis作为LRU缓存，或者为实例设置了硬性内存限制的时候（使用 "noeviction" 策略）的时候，这个选项通常事很有用的。
+//警告：当有多个slave连上达到内存上限时，master为同步slave的输出缓冲区所需内存不计算在使用内存中。这样当移除key时，就不会因网络问题 / 重新同步事件触发移除key的循环，反过来slaves的输出缓冲区充满了key被移除的DEL命令，这将触发删除更多的key，直到这个数据库完全被清空为止。总之，如果你需要附加多个slave，建议你设置一个稍小maxmemory限制，这样系统就会有空闲的内存作为slave的输出缓存区(但是如果最大内存策略设置为"noeviction"的话就没必要了)
+
+# maxmemory-policy noeviction
+//最大内存策略：如果达到内存限制了，Redis如何选择删除key。
+//volatile-lru -> 根据LRU算法删除设置过期时间的key
+//allkeys-lru -> 根据LRU算法删除任何key
+//volatile-random -> 随机移除设置过过期时间的key
+//allkeys-random -> 随机移除任何key
+//volatile-ttl -> 移除即将过期的key(minor TTL)
+//noeviction -> 不移除任何key，只返回一个写错误
+//注意：对所有策略来说，如果Redis找不到合适的可以删除的key都会在写操作时返回一个错误。默认策略:noeviction
+
+# maxmemory-samples 5
+//LRU和最小TTL算法的实现都不是很精确，但是很接近（为了省内存），所以你可以用样本量做检测。 例如：默认Redis会检查3个key然后取最旧的那个，你可以通过下面的配置指令来设置样本的个数。默认值为5，数字越大结果越精确但是会消耗更多CPU。
+
+######################################################### 延迟释放 #####################################################
+//redis 4.0新特性，从根本上解决Big Key(主要指定元素较多集合类型Key)删除的风险。
+//lazy free可译为惰性删除或延迟释放；当删除键的时候,redis提供异步延时释放key内存的功能，把key释放操作放在bio(Background I/O)单独的子线程处理中，减少删除big key对redis主线程的阻塞。有效地避免删除big key带来的性能和可用性问题。
+
+//Redis是single-thread程序(除少量的bio任务),当运行一个耗时较大的请求时，会导致所有请求排队等待redis不能响应其他请求，引起性能问题,甚至集群发生故障切换。
+//而redis删除大的集合键时，就属于这类比较耗时的请求。通过测试来看，删除一个100万个元素的集合键，耗时约1000ms左右。在redis4.0前，没有lazy free功能；DBA只能通过取巧的方法，类似scan big key,每次删除100个元素；但在面对“被动”删除键的场景，这种取巧的删除就无能为力。
+例如：我们生产Redis Cluster大集群，业务缓慢地写入一个带有TTL的2000多万个字段的Hash键，当这个键过期时，redis开始被动清理它时，导致redis被阻塞20多秒，当前分片主节点因20多秒不能处理请求，并发生主库故障切换。redis4.0有lazy free功能后，这类主动或被动的删除big key时，和一个O(1)指令的耗时一样,亚毫秒级返回； 把真正释放redis元素耗时动作交由bio后台任务执行。
+
+//lazy free的使用分为2类：第一类是与DEL命令对应的主动删除，第二类是过期key删除、maxmemory key驱逐淘汰删除。
+
+//1.主动删除类： UNLINK命令是与DEL一样删除key功能的lazy free实现。唯一不同时，UNLINK在删除集合类键时，如果集合键的元素个数大于64个(详细后文），会把真正的内存释放操作，给单独的bio来操作。示例：使用UNLINK命令删除一个大键mylist, 它包含200万个元素，但用时只有0.03毫秒。注意：DEL命令，还是并发阻塞的删除操作
+
+//2.主动删除类： 通过对FLUSHALL/FLUSHDB添加ASYNC异步清理选项，redis在清理整个实例或DB时，操作都是异步的。
+
+//3.被动删除键使用lazy free
+lazyfree-lazy-eviction no //针对redis内存使用达到maxmeory，并设置有淘汰策略时；在被动淘汰键时，是否采用lazy free机制；
+lazyfree-lazy-expire no //针对设置有TTL的键，达到过期后，被redis清理删除时是否采用lazy free机制；此场景建议开启，因TTL本身是自适应调整的速度。
+lazyfree-lazy-server-del no //针对有些指令在处理已存在的键时，会带有一个隐式的DEL键的操作。如rename命令，当目标键已存在,redis会先删除目标键，如果这些目标键是一个big key,那就会引入阻塞删除的性能问题。 此参数设置就是解决这类问题，建议可开启。
+slave-lazy-flush no //针对slave进行全量数据同步，slave在加载master的RDB文件前，会运行flushall来清理自己的数据场景，参数设置决定是否采用异常flush机制。如果内存变动不大，建议可开启。可减少全量同步耗时，从而减少主库因输出缓冲区爆涨引起的内存使用增长。
+
+//注意：从测试来看lazy free回收内存效率还是比较高的； 但在生产环境请结合实际情况，开启被动删除的lazy free 观察redis内存使用情况。
+
+
 http://www.jianshu.com/p/41f393f594e8
+http://www.cnblogs.com/guodf/p/6585657.html
+
+
 ```
 ## redis主从哨兵配置
