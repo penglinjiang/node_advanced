@@ -40,4 +40,4 @@ npm set <key> <value> [-g|--global]
 1.对于config这块用得最多应该是设置代理，解决npm安装一些模块失败的问题.  
 2.例如在公司内网，因为公司的防火墙原因，无法完成任何模块的安装，这个时候设置代理可以解决:npm config set proxy=http://www.proxy.com   
 3.又如国内的网络环境问题，某官方的IP可能被和谐了，幸好国内有好心人，搭建了镜像，此时我们简单设置镜像: npm config set registry="http://r.cnpmjs.org"   
-4.也可以临时配置，如安装淘宝镜像: npm install -g cnpm --registry=https://registry.npm.taobao.org 。**有一个需要注意的地方，cnpm 在安装包时使用的是 cnpm/npminstall 。项目的 readme 已经写明了细节，仔细阅读即可。简单来说，npminstall 下的 node_modules 目录采用和 npm 官方 client 不一样的布局，主要是为了最大限度提高安装速度。如果既想安装速度快，又想保持和npm一样的目录结构，可使用npm config set registry="https://registry.npm.taobao.org"，然后在使用npm安装依赖**
+4.也可以临时配置，如安装淘宝镜像: npm install -g cnpm --registry=https://registry.npm.taobao.org 。有一个需要注意的地方，cnpm 在安装包时使用的是 cnpm/npminstall 。项目的 readme 已经写明了细节，仔细阅读即可。简单来说，npminstall 下的 node_modules 目录采用和 npm 官方 client 不一样的布局，主要是为了最大限度提高安装速度。如果既想安装速度快，又想保持和npm一样的目录结构，可使用npm config set registry="https://registry.npm.taobao.org" ，然后在使用npm安装依赖
